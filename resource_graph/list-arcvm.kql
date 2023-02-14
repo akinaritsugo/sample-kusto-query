@@ -1,0 +1,4 @@
+// Arcサーバー一覧
+resources
+| where type =~ 'microsoft.hybridcompute/machines'
+| extend status = properties.status

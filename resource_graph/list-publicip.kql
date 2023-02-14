@@ -1,0 +1,6 @@
+// Public IP Address
+resources
+| where type =~ 'microsoft.network/publicipaddresses'
+| extend publicIpAddress = tostring(properties.ipAddress)
+| extend publicIpAddressId = tolower(id)
+

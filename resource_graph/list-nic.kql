@@ -1,0 +1,11 @@
+// NIC
+resources
+| where type =~ "microsoft.network/networkinterfaces"
+| extend virtualMachineName = extract('Microsoft.Compute/virtualMachines/(.*)', 1, tostring(properties.virtualMachine.id))
+| extend ipConfigCount=array_length(properties.ipConfigurations)
+| extend ipConfigurations=iff(ipConfigCount == 0, dynamic(null), properties.ipConfigurations)
+| mvexpand ipConfiguration=ipConfigurations limit 400
+| extend isPrimary = (ipConfigCount == 1 or ipConfiguration.properties.primary =~ 'true' or isempty(ipConfiguration))
+| extend publicIpAddressId = iff(isPrimary, tolower(ipConfiguration.properties.publicIPAddress.id), '')
+| extend privateIpAddress = iff(isPrimary, ipConfiguration.properties.privateIPAddress, '-')
+

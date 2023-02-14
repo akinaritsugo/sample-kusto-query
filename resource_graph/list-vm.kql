@@ -1,0 +1,7 @@
+// 仮想マシン一覧
+resources
+| where type =~ "microsoft.compute/virtualmachines"
+| extend vmSize = properties.hardwareProfile.vmSize
+| extend powerState = tostring(split(tolower(properties.extended.instanceView.powerState.code), "powerstate/")[1])
+| mvexpand nic = properties.networkProfile.networkInterfaces
+| extend nicId = tolower(nic.id)
